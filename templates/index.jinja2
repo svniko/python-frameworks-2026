@@ -1,0 +1,21 @@
+{% extends "layout.jinja2" %}
+{% block content %}
+    <h1>Home page</h1>
+    {# <p>This is template.</p>
+    <p>Hello, {{ name | title }}!</p>
+    <p>Your age: {{ age }}</p>
+    <p>Profession: {{ profession }}</p> #}
+    {% if name and age and profession %}
+        <p>Hello, {{ name }}. 
+            We know that you are {{age}} 
+            years old {{profession |lower}}</p>
+        {% elif name and not age and not profession%} 
+            <p>Hello, {{ name }}. 
+            We don't know your age and profession</p> 
+        {% elif name and age and not profession%} 
+        <p>Hello, {{ name }}. 
+            We know your age but no profession</p>
+        {% else %}
+        <p>Hello</p>
+    {% endif %}
+{% endblock %}

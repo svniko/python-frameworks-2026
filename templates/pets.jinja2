@@ -1,0 +1,41 @@
+{% extends "layout.jinja2" %}
+{% block content %}
+    <h1 id="name">Pets List</h1>
+    {# <ul>
+        {% for pet in pets %}
+            
+            <h2 class="mine"> {{ pet.name }} </h2>
+             <p>is a {{ pet.species }}
+            he is {{ pet.age }} years old and {{pet.color}}
+            </p>
+        {% endfor %}
+    </ul> #}
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                {# <th>Name</th>
+                <th>Species</th>
+                <th>Age</th>
+                <th>Color</th> #}
+                {%set first = pets[0]%}
+                {% for key in first.keys()%}
+                    <th>{{ key | title }}</th>
+                {% endfor %}
+                <th>Photo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pet in pets %}
+            <tr>
+                <td>{{ pet.species}}</td>
+                <td>{{ pet.name }}</td>
+                <td>{{ pet.age }}</td>
+                <td>{{ pet.color }}</td>
+                {%set str_name = 'images/'+ pet.species + '.png'%}
+                <td><img src="{{ url_for('static', filename=str_name) }}" alt="{{ pet.name }}'s photo" width="100"></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

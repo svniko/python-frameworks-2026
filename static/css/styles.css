@@ -1,0 +1,30 @@
+p{
+    color: blue;
+    font-size: 1.5em;
+}
+
+.mine{
+    color: brown;
+    font-size: 1.5em;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+#name{
+    border-style: dashed;
+    border-radius: 10px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    text-align: center;
+}
+
+body{
+    /* background-color: rgb(247, 242, 242); */
+    width: 600px;
+    margin: auto;
+}
+
+th{
+   padding: 10px;
+   color: tomato;
+   margin: 10px;
+   border-bottom: solid 1px black;
+}
