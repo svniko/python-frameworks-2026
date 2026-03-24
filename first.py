@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 
 app = Flask(__name__, 
             # template_folder="jinja_templates"
@@ -28,7 +28,7 @@ pets = [
 
 @app.route("/")
 def hello_world():
-    return "<h2>Hello, World!</h2>"
+    return render_template("about.jinja2", title="About Page")
 
 @app.route("/about/")
 def about():
@@ -84,9 +84,35 @@ def pets_list():
                            pets=pets,
                            title="Pets List")
 
+@app.route("/lect4/")
+def lecture4():
+    return render_template("lecture4.jinja2", 
+                           title="Lecture 4")
+
+@app.route("/greeting/", methods=["GET", "POST"])
+def greeting():
+    if request.method == "GET":
+        return render_template("greeting.jinja2", 
+                           title="Greeting",
+                           name="Guest")
+    else:
+        name = request.form.get("name")
+        if not name:
+            return render_template("lecture4.jinja2", 
+                            title="Lecture 4", flag=1)
+        return render_template("greeting.jinja2", 
+                            title="Greeting",
+                            name=name)
+
+
+
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template("404.jinja2", title="Page Not Found"), 404
+
+@app.errorhandler(405)
+def method_not_allowed(error):
+    return render_template("405.jinja2", title="Method Not Allowed"), 405
 
 # if __name__ == "__main__":
 #     app.run(debug=True, port=8000)

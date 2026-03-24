@@ -1,0 +1,31 @@
+{% extends "layout.jinja2" %}
+{% block content %}
+    {% if flag %}
+       <p class="alert alert-danger" role="alert">Enter your name!</p>
+    {% endif%}
+
+    <h1>Lecture 4</h1>
+    {# <form action="https://www.google.com/search" method="get">
+        <input type="text" name="q" placeholder="Search Google...">
+        <button type="submit" class="btn btn-primary">Search</button>
+    
+    </form> #}
+
+    <form action="{{ url_for('greeting') }}" method="post">
+    <input type="text" name="name" 
+           placeholder="Enter your name..." 
+           autofocus autocomplete="off"> 
+    <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+       if( {{flag}} ){
+        document.querySelector('input[name="name"]').style.backgroundColor = "red";
+        } else {
+        document.querySelector('input[name="name"]').style.backgroundColor = "white";
+        }
+
+      });
+    </script>
+{% endblock %}
