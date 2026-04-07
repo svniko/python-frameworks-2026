@@ -1,0 +1,26 @@
+{% extends "layout.jinja2"%}
+{%block content%}
+  <h1>Rock-Scissors-Paper</h1>
+  <h2>Round: {{round}}/5</h2>
+  <h3>Score: You: {{y_win}} - {{c_win}} Computer</h3>
+
+  {% for category, message in get_flashed_messages(with_categories=true)%}
+  <div class="alert alert-{{category}}" role="alert">
+     {{message}}
+  </div>
+  {%endfor%}
+
+  {% if not game_over%}
+  <div class="container mt-4">
+  <ul>
+     <li><a href="{{url_for('select', ch=0)}}"><img src="{{url_for('static', filename='images/rock.png')}}" width="100"></a></li>
+     <li><img src="{{url_for('static', filename='images/scissors.png')}}" width="100"></li>
+     <li><img src="{{url_for('static', filename='images/paper.png')}}" width="100"></li>
+  
+  </ul>
+  </div>
+  {% endif%}
+  <div class="container mt-4">
+     <a href="{{url_for('start')}}" class="btn btn-primary">Почати спочатку</a>
+  </div>
+{%endblock%}

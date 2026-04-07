@@ -1,3 +1,4 @@
+import random
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
@@ -34,6 +35,84 @@ pets = [
         'color':'brown'
     }
 ]
+
+
+def init_game():
+    session['you_win'] = 0
+    session['comp_win'] = 0
+    session['round'] = 0
+    session['player_choice'] = None
+    session['game_over'] = False
+
+@app.route('/start/')
+def start():
+    init_game()
+    return render_template('rsp.jinja2',
+                           title='Game')  
+
+@app.route('/select/<int:ch>')  
+def select(ch):
+    session['player_choice'] = ch
+    return redirect(url_for('rsp'))
+
+
+@app.route('/game/')
+def rsp():
+    if 'round' not in session:
+        return redirect(url_for('start'))
+    
+    names = {0:"Rock", 1:"Scissors", 2:"Paper"}
+
+    if session['player_choice'] is not None and session['round'] < 5:
+        session['round'] += 1
+        comp_choice = random.randint(0, 2)
+        user_choice = session['player_choice']
+        
+        session['player_choice'] = None
+
+        # if user_choice == comp_choice:
+        #     flash(f'Нічія! Обидва обрали {names[user_choice]}', 'warning')
+        # elif user_choice == 0 and comp_choice == 1:
+                       
+        #     # TO DO
+        #     flash(f'Перемога', 'success')
+        #     session['you_win'] += 1
+        # else:
+        #     flash('Програш', 'danger')
+        #     session['comp_win'] += 1
+
+        result = (user_choice - comp_choice) % 3
+
+        if result == 0:
+            flash(f'Нічія! Обидва обрали {names[user_choice]}', 'warning')
+        elif result == 2:
+            flash(f'Перемога', 'success')
+            session['you_win'] += 1
+        else:
+            flash('Програш', 'danger')
+            session['comp_win'] += 1
+    
+
+
+    if session['round'] == 5:
+        session['game_over'] = True
+        if session['you_win'] > session['comp_win']:
+            flash('Вітаємо! Ви виграли', 'info')
+        elif session['you_win'] < session['comp_win']:
+            flash('Нажаль! Ви програли', 'info')
+        else:
+            flash('Тотальні нічія', 'info')
+
+    return render_template('rsp.jinja2', title='Game',
+                           round=session.get('round'),
+                           y_win=session.get('you_win'),
+                           c_win=session.get('comp_win'),
+                           game_over=session.get('game_over')
+                           )
+             
+
+
+    
 
 @app.route("/lect5/", methods=["GET", "POST"])
 def lecture5():
