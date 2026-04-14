@@ -1,8 +1,11 @@
 import random
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
+
+from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime, timezone
 
 
 app = Flask(__name__, 
@@ -10,10 +13,32 @@ app = Flask(__name__,
             )
 
 app.config['SECRET_KEY'] = "09a3c518e4b652986a6d"
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///user.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = 	False
+
+db = SQLAlchemy(app)
 
 class FirstForm(FlaskForm):
     name = StringField("Enter your name", validators=[DataRequired()])
     submit = SubmitField("Submit")
+
+class UserForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired()])
+    email = StringField("Email", validators=[DataRequired()])
+    submit = SubmitField("Submit")
+
+
+class Users(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    name = db.Column(db.String(200), nullable=False) 
+    email = db.Column(db.String(120), nullable=False, unique = True)
+    date_added = db.Column(db.DateTime, 
+                     default = datetime.now(timezone.utc))
+    
+    def __repr__(self):
+        return f"<Name:> {self.name}"
+
+
 
 pets = [
     {
@@ -43,6 +68,41 @@ def init_game():
     session['round'] = 0
     session['player_choice'] = None
     session['game_over'] = False
+
+@app.route('/user/add', methods=['GET', 'POST'])
+def add_user():
+    form = UserForm()
+    our_users = []
+
+    if form.validate_on_submit():
+        # check if a user with entered email already exists
+        user = Users.query.filter_by(email=form.email.data).first()
+        if user is None:
+            # if not - add the user to database
+            user = Users(name = form.name.data, email = form.email.data)
+            db.session.add(user)
+            db.session.commit()
+            flash(f'User {form.name.data} added successfully')
+        else:
+            flash(f'Email {form.email.data} is already used')
+        #clear form fields
+        form.name.data = ''
+        form.email.data = ''
+        #create the list of all users
+        our_users = Users.query.order_by(Users.date_added)
+    return render_template('Lecture7.jinja2',
+                           form=form,
+                           our_users=our_users)
+
+
+@app.route('/users/')
+def get_users():
+    users=Users.query.all()
+    user_list = [{'id':user.id,
+                  'username':user.name,
+                  'email':user.email} for user in users]
+    
+    return jsonify(users=user_list)
 
 @app.route('/start/')
 def start():
@@ -101,7 +161,7 @@ def rsp():
         elif session['you_win'] < session['comp_win']:
             flash('Нажаль! Ви програли', 'info')
         else:
-            flash('Тотальні нічія', 'info')
+            flash('Тотальна нічія', 'info')
 
     return render_template('rsp.jinja2', title='Game',
                            round=session.get('round'),

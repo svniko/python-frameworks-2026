@@ -1,0 +1,33 @@
+{% extends "layout.jinja2"%}
+{% block content %}
+<h1>Lecture 7 </h1>
+{% for message in get_flashed_messages() %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" 
+                aria-label="Close"></button>
+    </div>
+{% endfor %}
+<div class="shadow p-3 mb-5 bg-body rounded">
+<form method="POST">
+     {{form.hidden_tag() }}
+     {{form.name.label(class="form-label")}} 
+     {{form.name(class="form-control", autocomplete="off")}}
+      <br>
+     {{form.email.label(class="form-label")}} 
+     {{form.email(class="form-control", autocomplete="off")}}
+     <br>
+     {{form.submit(class="btn btn-primary")}}
+</form>
+</div>
+<br>
+<table class="table table-hover">
+{% for our_user in our_users %}
+     <tr>
+        <td>{{our_user.id}}</td> 
+        <td>{{our_user.name}}</td>
+        <td> {{our_user.email}}</td>
+     </tr>
+{% endfor %}
+</table>
+{% endblock content %}
